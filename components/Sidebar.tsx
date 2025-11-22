@@ -7,7 +7,7 @@ import { FaceLandmarker } from '@mediapipe/tasks-vision';
 interface SidebarProps {
   selectedIndices: Set<number>;
   onClear: () => void;
-  onSelectAll: () => void; 
+  onSelectAll: () => void;
   onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isProcessing: boolean;
   hasMesh: boolean;
@@ -30,18 +30,18 @@ const getIndicesFromConnections = (connections: {start: number, end: number}[]) 
   return set;
 };
 
-const Sidebar: React.FC<SidebarProps> = ({ 
-  selectedIndices, 
-  onClear, 
-  onImageUpload, 
+const Sidebar: React.FC<SidebarProps> = ({
+  selectedIndices,
+  onClear,
+  onImageUpload,
   isProcessing,
   hasMesh
 }) => {
   // Cast to number[] to avoid TS inference issues with Set iteration in some environments
-  const indicesArray = useMemo(() => 
-    (Array.from(selectedIndices) as number[]).sort((a, b) => a - b), 
+  const indicesArray = useMemo(() =>
+    (Array.from(selectedIndices) as number[]),
   [selectedIndices]);
-  
+
   const formattedIndices = JSON.stringify(indicesArray);
 
   const analysis = useMemo(() => {
@@ -115,7 +115,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
-        
+
         {/* Upload Section */}
         <section>
           <h2 className="text-sm font-medium text-zinc-300 mb-3 flex items-center gap-2">
@@ -128,10 +128,10 @@ const Sidebar: React.FC<SidebarProps> = ({
               </p>
               <p className="text-xs text-zinc-500 mt-1">JPG, PNG</p>
             </div>
-            <input 
-              type="file" 
-              className="hidden" 
-              accept="image/*" 
+            <input
+              type="file"
+              className="hidden"
+              accept="image/*"
               onChange={onImageUpload}
               disabled={isProcessing}
             />
@@ -146,7 +146,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               {selectedIndices.size} points
             </span>
           </div>
-          
+
           <div className="bg-zinc-950 rounded-lg p-3 border border-zinc-800 min-h-[100px] max-h-[150px] overflow-y-auto font-mono text-xs text-zinc-400 break-words">
             {selectedIndices.size > 0 ? (
                indicesArray.join(', ')
@@ -156,21 +156,21 @@ const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           <div className="flex gap-2 mt-3">
-            <button 
+            <button
               onClick={handleCopy}
               disabled={selectedIndices.size === 0}
               className="flex-1 flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs py-2 rounded-md transition-colors disabled:opacity-50"
             >
               <Copy size={12} /> Copy
             </button>
-            <button 
+            <button
               onClick={handleDownload}
               disabled={selectedIndices.size === 0}
               className="flex-1 flex items-center justify-center gap-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs py-2 rounded-md transition-colors disabled:opacity-50"
             >
               <Download size={12} /> JSON
             </button>
-            <button 
+            <button
               onClick={onClear}
               disabled={selectedIndices.size === 0}
               className="px-3 bg-red-900/20 hover:bg-red-900/40 text-red-400 border border-red-900/50 rounded-md transition-colors disabled:opacity-50"
@@ -200,7 +200,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                       <div className="flex items-center gap-2">
                         <span className="text-zinc-500">{match.count}/{match.total}</span>
                         <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
-                          match.percentage > 80 ? 'bg-emerald-900/30 text-emerald-400' : 
+                          match.percentage > 80 ? 'bg-emerald-900/30 text-emerald-400' :
                           match.percentage > 40 ? 'bg-blue-900/30 text-blue-400' :
                           'bg-zinc-700 text-zinc-400'
                         }`}>
