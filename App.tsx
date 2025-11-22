@@ -1,9 +1,10 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import Sidebar from './components/Sidebar';
 import MeshOverlay from './components/MeshOverlay';
 import { faceMeshService } from './services/faceMeshService';
 import { Landmark } from './types';
+import face from './face.jpg';
 
 const App: React.FC = () => {
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -12,15 +13,12 @@ const App: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [imageDimensions, setImageDimensions] = useState({ width: 0, height: 0 });
 
-  const processImage = useCallback(async (file: File) => {
+  const processImageUrl = useCallback(async (url: string) => {
     setIsProcessing(true);
     setLandmarks([]);
-    setSelectedIndices(new Set());
-
-    const url = URL.createObjectURL(file);
-    setImageSrc(url);
 
     const img = new Image();
+    img.crossOrigin = 'anonymous';
     img.src = url;
     img.onload = async () => {
       setImageDimensions({ width: img.naturalWidth, height: img.naturalHeight });
@@ -38,11 +36,26 @@ const App: React.FC = () => {
         setIsProcessing(false);
       }
     };
+
+    img.onerror = () => {
+      alert("Failed to load image from source");
+      setIsProcessing(false);
+    };
   }, []);
+
+  useEffect(() => {
+    setImageSrc(face);
+    setSelectedIndices(new Set());
+    processImageUrl(face);
+  }, [face]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      processImage(e.target.files[0]);
+      const file = e.target.files[0];
+      const url = URL.createObjectURL(file);
+      setImageSrc(url);
+      setSelectedIndices(new Set());
+      processImageUrl(url);
     }
   };
 
@@ -64,7 +77,7 @@ const App: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-zinc-950">
-      <Sidebar 
+      <Sidebar
         selectedIndices={selectedIndices}
         onClear={clearSelection}
         onSelectAll={() => {}} // Placeholder
@@ -100,20 +113,20 @@ const App: React.FC = () => {
                 {/* Removed !w-full !h-full from contentClass to prevent flex shrinking the image container */}
                 <TransformComponent wrapperClass="!w-full !h-full" contentClass="!flex !items-center !justify-center">
                   {/* Added shrink-0 to prevent flexbox from squashing the container if image is large */}
-                  <div 
-                    className="relative shadow-2xl shadow-black/50 shrink-0" 
+                  <div
+                    className="relative shadow-2xl shadow-black/50 shrink-0"
                     style={{ width: imageDimensions.width, height: imageDimensions.height }}
                   >
                     {/* The Image */}
-                    <img 
-                      src={imageSrc} 
-                      alt="Face Source" 
+                    <img
+                      src={imageSrc}
+                      alt="Face Source"
                       className="block w-full h-full object-contain pointer-events-none select-none"
                     />
-                    
+
                     {/* The Mesh Overlay */}
                     {landmarks.length > 0 && (
-                      <MeshOverlay 
+                      <MeshOverlay
                         landmarks={landmarks}
                         width={imageDimensions.width}
                         height={imageDimensions.height}
