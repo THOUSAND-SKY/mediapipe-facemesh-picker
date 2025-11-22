@@ -1,0 +1,5 @@
+{
+  "name": "Copy of FaceMesh Studio",
+  "description": "An interactive tool to generate MediaPipe Face Meshes on images and select landmark indices for export or analysis.",
+  "requestFramePermissions": []
+}
